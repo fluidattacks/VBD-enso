@@ -21,6 +21,14 @@ class HorizonServiceProvider extends HorizonApplicationServiceProvider
 
     protected function gate()
     {
-        Gate::define('viewHorizon', fn ($user) => $user?->isAdmin());
+        Gate::define('viewHorizon', function (?\App\Models\User $user = null) {
+            $cfg = config('tuning.environments');
+            if (!is_array($cfg)) {
+                $cfg = [$cfg];
+            }
+            $allowed = $cfg;
+            $result = app()->environment($allowed);
+            return $result;
+        });
     }
 }
